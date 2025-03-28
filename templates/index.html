@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detector</title>
+    <style>
+               body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            color: #333;
+        }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        input, button { padding: 10px; margin: 10px;  }
+        input { width: 400px; height: 200px; align-content: center; text-align:initial; text-wrap: break-word;}
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+
+        textarea {
+            width: 90%;
+            height: 120px; /* Large input box */
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: left; /* Ensure left alignment */
+            vertical-align: top; /* Ensures text starts at the top */
+            line-height: 1.5; /* Improves readability */
+            overflow-y: auto; /* Allows scrolling if needed */
+            resize: vertical; /* Allows resizing vertically */
+        }
+
+        #result { margin-top: 20px; font-weight: bold; }
+
+
+    </style>
+</head>
+<body>
+    <h2>App Fraud Detector</h2>
+    <textarea id="app_id" placeholder="Enter App ID or Link..."></textarea>
+    <button onclick="classifyApp()">Check Fraud</button>
+
+    <div id="result"></div>
+
+    <script>
+        function classifyApp() {
+            let app_id = document.getElementById("app_id").value;
+            if (!app_id) {
+                alert("Please enter an App ID or link.");
+                return;
+            }
+
+            fetch("/classify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ app_id: app_id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerHTML = `
+                    <p>Prediction: ${data.prediction.toUpperCase()}</p>
+                    <p>Reason: ${data.reason}</p>
+                `;
+            })
+            .catch(error => {
+                document.getElementById("result").innerHTML = "<p style='color: red;'>Error: Unable to process request.</p>";
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
